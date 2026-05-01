@@ -35,8 +35,10 @@ try {
 
 git config user.name $Owner
 git config user.email "$Owner@users.noreply.github.com"
-git remote remove origin 2>$null
-if ($LASTEXITCODE -ne 0) { $global:LASTEXITCODE = 0 }
+$ExistingOrigin = git remote 2>$null | Select-String -SimpleMatch "origin"
+if ($ExistingOrigin) {
+  git remote remove origin
+}
 git remote add origin "https://github.com/$Owner/$Repo.git"
 git branch -M main
 
