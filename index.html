@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PomoFocus Clone</title>
+  <meta name="description" content="A clean Pomodoro timer inspired by Pomofocus.io.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="pomodoro">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="." aria-label="PomoFocus Clone home">
+        <span class="brand-dot"></span>
+        <span>PomoFocus</span>
+      </a>
+      <nav class="top-actions" aria-label="Toolbar">
+        <button id="reportBtn" class="ghost" type="button">Report</button>
+        <button id="settingsBtn" class="ghost" type="button">Settings</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="modeTitle">
+        <div class="timer-card">
+          <div class="tabs" role="tablist" aria-label="Timer mode">
+            <button class="tab active" type="button" role="tab" aria-selected="true" data-mode="pomodoro">Pomodoro</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-mode="short">Short Break</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-mode="long">Long Break</button>
+          </div>
+
+          <h1 id="modeTitle" class="sr-only">Pomodoro timer</h1>
+          <div id="timeDisplay" class="time" aria-live="polite">25:00</div>
+
+          <div class="timer-actions">
+            <button id="startBtn" class="primary" type="button">START</button>
+            <button id="resetBtn" class="icon-button" type="button" title="Reset timer" aria-label="Reset timer">↻</button>
+          </div>
+        </div>
+
+        <p id="roundText" class="round">#1 Time to focus!</p>
+      </section>
+
+      <section class="tasks" aria-labelledby="tasksTitle">
+        <div class="section-heading">
+          <h2 id="tasksTitle">Tasks</h2>
+          <button id="clearDoneBtn" class="ghost dark" type="button">Clear done</button>
+        </div>
+
+        <form id="taskForm" class="task-form">
+          <input id="taskInput" type="text" placeholder="What are you working on?" autocomplete="off" maxlength="120" required>
+          <button type="submit">Add Task</button>
+        </form>
+
+        <ul id="taskList" class="task-list" aria-label="Task list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="settings-panel">
+      <div class="modal-header">
+        <h2>Timer Settings</h2>
+        <button class="close" value="cancel" aria-label="Close settings">×</button>
+      </div>
+
+      <div class="setting-grid">
+        <label>
+          Pomodoro
+          <input id="pomodoroMinutes" type="number" min="1" max="180" step="1">
+        </label>
+        <label>
+          Short Break
+          <input id="shortMinutes" type="number" min="1" max="60" step="1">
+        </label>
+        <label>
+          Long Break
+          <input id="longMinutes" type="number" min="1" max="90" step="1">
+        </label>
+        <label>
+          Long break every
+          <input id="longEvery" type="number" min="2" max="12" step="1">
+        </label>
+      </div>
+
+      <label class="toggle-row">
+        <span>Auto-start breaks</span>
+        <input id="autoBreaks" type="checkbox">
+      </label>
+
+      <label class="toggle-row">
+        <span>Desktop notifications</span>
+        <input id="notifications" type="checkbox">
+      </label>
+
+      <menu class="modal-actions">
+        <button id="saveSettings" class="primary small" value="default">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <audio id="ding" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="></audio>
+  <script src="app.js"></script>
+</body>
+</html>
