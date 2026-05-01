@@ -22,6 +22,9 @@ let round = Number(localStorage.getItem('pomo.round') || '1');
 let completedPomodoros = Number(localStorage.getItem('pomo.completed') || '0');
 let startPresses = Number(localStorage.getItem('pomo.startPresses') || '0');
 let trackingLabel = 'this browser';
+let theme = localStorage.getItem('pomo.theme') || 'light';
+let sessionSeed = localStorage.getItem('pomo.seed') || String(Math.floor(Math.random() * 9000000000) + 1000000000);
+localStorage.setItem('pomo.seed', sessionSeed);
 
 const $ = (id) => document.getElementById(id);
 const timeDisplay = $('timeDisplay');
@@ -82,6 +85,8 @@ function render() {
   $('pressCount').textContent = startPresses.toLocaleString();
   $('completedCount').textContent = completedPomodoros.toLocaleString();
   $('ipLabel').textContent = trackingLabel;
+  $('seedText').textContent = `SEED: ${sessionSeed}`;
+  $('themeBtn').textContent = theme === 'dark' ? 'LIGHT' : 'DARK';
   renderTasks();
 }
 
@@ -290,12 +295,25 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, number));
 }
 
+function applyTheme(nextTheme = theme) {
+  theme = nextTheme === 'dark' ? 'dark' : 'light';
+  document.body.classList.toggle('dark', theme === 'dark');
+  localStorage.setItem('pomo.theme', theme);
+  if ($('themeBtn')) $('themeBtn').textContent = theme === 'dark' ? 'LIGHT' : 'DARK';
+}
+
+function toggleTheme() {
+  applyTheme(theme === 'dark' ? 'light' : 'dark');
+  showToast(`${theme.toUpperCase()} MODE ENABLED`);
+}
+
 document.querySelectorAll('.tab').forEach((tab) => {
   tab.addEventListener('click', () => setMode(tab.dataset.mode));
 });
 
 startBtn.addEventListener('click', startTimer);
 resetBtn.addEventListener('click', resetTimer);
+$('themeBtn').addEventListener('click', toggleTheme);
 $('settingsBtn').addEventListener('click', openSettings);
 $('saveSettings').addEventListener('click', saveSettings);
 $('reportBtn').addEventListener('click', () => {
@@ -338,6 +356,7 @@ async function detectTrackingScope() {
   render();
 }
 
+applyTheme(theme);
 setMode('pomodoro');
 detectTrackingScope();
 render();

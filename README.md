@@ -12,7 +12,8 @@ Features:
 - Local task list with completed-task clearing
 - Local start-button count and completed-session count
 - Public-IP label when available; counts are stored in this browser because GitHub Pages has no backend/database
-- Sleek glassmorphism design
+- Nordic / Nous Research inspired blue-on-paper focus-console design
+- Dark mode with persistent theme toggle
 - Original anime-inspired completion jingle made with Web Audio API
 
 Static files only. Works on GitHub Pages.

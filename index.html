@@ -7,7 +7,7 @@
   <meta name="description" content="A sleek Pomodoro focus timer with tasks, stats, and an original anime-inspired completion jingle.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-mode="pomodoro">
@@ -18,14 +18,24 @@
         <span>ZenPomo</span>
       </a>
       <nav class="top-actions" aria-label="Toolbar">
-        <button id="reportBtn" class="ghost" type="button">Report</button>
-        <button id="settingsBtn" class="ghost" type="button">Settings</button>
+        <button id="themeBtn" class="ghost" type="button" aria-label="Toggle dark mode">DARK</button>
+        <button id="reportBtn" class="ghost" type="button">REPORT</button>
+        <button id="settingsBtn" class="ghost" type="button">SETTINGS</button>
       </nav>
     </header>
 
     <main>
       <section class="hero" aria-labelledby="modeTitle">
-        <div class="timer-card">
+        <div class="lab-grid">
+          <aside class="signal-panel" aria-label="Focus signal visualization">
+            <div class="scanline-art">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p>ATTENTION WINDOW</p>
+            <small id="seedText">SEED: 0000000000</small>
+          </aside>
+
+          <div class="timer-card">
           <div class="tabs" role="tablist" aria-label="Timer mode">
             <button class="tab active" type="button" role="tab" aria-selected="true" data-mode="pomodoro">Pomodoro</button>
             <button class="tab" type="button" role="tab" aria-selected="false" data-mode="short">Short Break</button>
@@ -38,6 +48,7 @@
           <div class="timer-actions">
             <button id="startBtn" class="primary" type="button">START</button>
             <button id="resetBtn" class="icon-button" type="button" title="Reset timer" aria-label="Reset timer">↻</button>
+          </div>
           </div>
         </div>
 
