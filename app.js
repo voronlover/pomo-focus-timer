@@ -20,6 +20,8 @@ let secondsLeft = settings.pomodoro * 60;
 let timerId = null;
 let round = Number(localStorage.getItem('pomo.round') || '1');
 let completedPomodoros = Number(localStorage.getItem('pomo.completed') || '0');
+let startPresses = Number(localStorage.getItem('pomo.startPresses') || '0');
+let trackingLabel = 'this browser';
 
 const $ = (id) => document.getElementById(id);
 const timeDisplay = $('timeDisplay');
@@ -77,6 +79,9 @@ function render() {
   document.title = `${format(secondsLeft)} - ${MODES[mode].label}`;
   startBtn.textContent = timerId ? 'PAUSE' : 'START';
   roundText.textContent = `#${round} ${MODES[mode].message}`;
+  $('pressCount').textContent = startPresses.toLocaleString();
+  $('completedCount').textContent = completedPomodoros.toLocaleString();
+  $('ipLabel').textContent = trackingLabel;
   renderTasks();
 }
 
@@ -86,6 +91,10 @@ function startTimer() {
     render();
     return;
   }
+
+  startPresses += 1;
+  localStorage.setItem('pomo.startPresses', String(startPresses));
+  playStartChime();
 
   timerId = setInterval(() => {
     secondsLeft -= 1;
@@ -133,10 +142,48 @@ async function finishSession() {
 }
 
 function playDing() {
+  playAnimeInspiredJingle();
+}
+
+function playStartChime() {
+  playToneSequence([
+    [659.25, 0.045, 0.045],
+    [987.77, 0.06, 0.055]
+  ], 0.055, 'triangle');
+}
+
+function playAnimeInspiredJingle() {
+  // Original short "power-up" jingle. It is anime-inspired, not copied from Dragon Ball or any copyrighted theme.
+  playToneSequence([
+    [392.00, 0.10, 0.08],
+    [493.88, 0.10, 0.08],
+    [587.33, 0.12, 0.08],
+    [783.99, 0.18, 0.10],
+    [987.77, 0.24, 0.12],
+    [1174.66, 0.32, 0.14]
+  ], 0.16, 'sawtooth');
+}
+
+function playToneSequence(notes, volume = 0.12, wave = 'sine') {
   try {
-    const audio = $('ding');
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    let when = ctx.currentTime + 0.02;
+    notes.forEach(([frequency, duration, gap]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = wave;
+      osc.frequency.setValueAtTime(frequency, when);
+      gain.gain.setValueAtTime(0.0001, when);
+      gain.gain.exponentialRampToValueAtTime(volume, when + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(when);
+      osc.stop(when + duration + 0.04);
+      when += duration + gap;
+    });
+    setTimeout(() => ctx.close().catch(() => {}), Math.ceil((when - ctx.currentTime + 0.5) * 1000));
   } catch (_) {}
 }
 
@@ -252,7 +299,7 @@ resetBtn.addEventListener('click', resetTimer);
 $('settingsBtn').addEventListener('click', openSettings);
 $('saveSettings').addEventListener('click', saveSettings);
 $('reportBtn').addEventListener('click', () => {
-  showToast(`${completedPomodoros} pomodoros completed.`);
+  showToast(`${startPresses} starts, ${completedPomodoros} completed on ${trackingLabel}.`);
 });
 $('clearDoneBtn').addEventListener('click', () => {
   settings.tasks = settings.tasks.filter((task) => !task.done);
@@ -277,5 +324,20 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
+async function detectTrackingScope() {
+  // GitHub Pages is static: it cannot count by IP globally without a backend/database.
+  // This labels the current public IP when available, but stores counts locally in this browser.
+  try {
+    const response = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('IP lookup failed');
+    const data = await response.json();
+    if (data.ip) trackingLabel = `browser @ ${data.ip}`;
+  } catch (_) {
+    trackingLabel = 'this browser';
+  }
+  render();
+}
+
 setMode('pomodoro');
+detectTrackingScope();
 render();

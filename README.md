@@ -10,6 +10,9 @@ Features:
 - Auto-start breaks option
 - Desktop notification option
 - Local task list with completed-task clearing
-- LocalStorage persistence
+- Local start-button count and completed-session count
+- Public-IP label when available; counts are stored in this browser because GitHub Pages has no backend/database
+- Sleek glassmorphism design
+- Original anime-inspired completion jingle made with Web Audio API
 
 Static files only. Works on GitHub Pages.
